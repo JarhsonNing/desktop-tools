@@ -1,24 +1,6 @@
-# electron-demo
+# desktop-tools
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+使用 electron 制作的桌面小工具包，初步计划包含了一个音乐播放器，一个 todolist。
+主要开发人员  
+[jarhson](https://github.com/ningwenjun)
+[YiField](https://github.com/YiField)
