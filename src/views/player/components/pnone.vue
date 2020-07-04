@@ -10,7 +10,7 @@
         <md-bottom-bar-item
           id="bottom-bar-item-home"
           md-label="网易云"
-          to="/player/home"
+          to="/player/neteasy"
           md-icon="/assets/svg/neteasy.svg"
         ></md-bottom-bar-item>
         <md-bottom-bar-item
