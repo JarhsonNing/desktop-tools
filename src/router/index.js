@@ -2,10 +2,13 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import playerRouter from './player'
+import todolistRouter from './todolist'
+
 Vue.use(VueRouter)
 
 const routes = [
   ...playerRouter,
+  ...todolistRouter,
   {
     path: '/',
     name: 'Home',
