@@ -2,11 +2,15 @@
   <div class="control">
     <md-progress-bar
       class="progress"
-      md-mode="determinate"
+      md-mode="buffer"
+      :md-buffer="audioBuffered"
       :md-value="playProgress"
       v-clickChangeProgress
     ></md-progress-bar>
-    <md-toolbar style="justify-content: center" class="md-accent">
+    <md-toolbar
+      style="justify-content: center; min-height:56px "
+      class="md-accent"
+    >
       <div class="control-center">
         <!-- 播放模式 -->
         <md-menu md-size="medium" md-direction="top-end">
@@ -36,12 +40,16 @@
           <i class="fa fa-step-backward"></i>
         </md-button>
         <!-- 暂停/播放 -->
-        <md-button class="md-icon-button" @click="status = !status">
-          <i v-if="status" class="fa fa-play-circle play"></i>
-          <i v-else class="fa fa-pause-circle pause"></i>
+        <md-button class="md-icon-button">
+          <i
+            v-if="isPaused"
+            class="fa fa-play-circle play"
+            @click="playMusic"
+          ></i>
+          <i v-else class="fa fa-pause-circle pause" @click="pauseMusic"></i>
         </md-button>
         <!-- 下一曲 -->
-        <md-button class="md-icon-button next">
+        <md-button class="md-icon-button next" @click="nextMusic">
           <i class="fa fa-step-forward"></i>
         </md-button>
       </div>
@@ -54,11 +62,50 @@
     name: 'controlCenter',
     data() {
       return {
-        status: false,
-        mode: 'random'
+        isPaused: true,
+        // musicReady: 0,
+        mode: 'random',
+        interval: null
       }
     },
-    mounted() {},
+    mounted() {
+      console.dir(this.audio)
+    },
+    watch: {
+      mode: {
+        handler(mode) {
+          if (mode === 'circle') {
+            this.audio.loop = true
+          } else {
+            this.audio.loop = false
+          }
+        }
+      },
+      currentIndex(val) {
+        console.log(val)
+      },
+      'audio.ended': {
+        handler(val) {
+          console.log(val)
+        },
+        deep: true
+      },
+      'audio.src': {
+        deep: true,
+        handler(val) {
+          console.log(val)
+        }
+      },
+      customPlayTime: {
+        deep: true,
+        handler(val) {
+          this.pauseMusic()
+          this.playProgress = val
+          this.audio.currentTime = (this.audio.duration * val) / 100
+          this.playMusic()
+        }
+      }
+    },
     computed: {
       // 音乐播放进度
       playProgress: {
@@ -68,9 +115,89 @@
         set(val) {
           this.$store.commit('SET_PLAY_PROGESS', val)
         }
+      },
+      // 音乐缓存
+      audioBuffered: {
+        get() {
+          return this.$store.state.player.audioBuffered
+        },
+        set(val) {
+          this.$store.commit('SET_AUDIO_BUFFERED', val)
+        }
+      },
+      // 音乐列表
+      musicList: {
+        get() {
+          return this.$store.state.player.playList
+        },
+        set(val) {
+          this.$store.commit('SET_PLAY_LIST', val)
+        }
+      },
+      // 当前的音乐index
+      currentIndex: {
+        get() {
+          console.log('current')
+          return this.$store.state.player.currentIndex
+        },
+        set(val) {
+          this.$store.commit('SET_CURRENT_INDEX', val)
+        }
+      },
+      customPlayTime() {
+        return this.$store.state.player.customPlayTime
+      },
+      // 音频dom
+      audio() {
+        return new Audio(this.musicList[this.currentIndex].src)
       }
     },
-    methods: {}
+    methods: {
+      playMusic() {
+        if (!this.audio.paused) {
+          this.audio.src = this.musicList[this.currentIndex].src
+        }
+        this.audio.play()
+        this.isPaused = this.audio.paused
+        console.dir(this.audio)
+        this.interval = setInterval(() => {
+          if (this.audio.buffered.end(0) !== this.audio.duration) {
+          }
+          if (this.audio.readyState) {
+            this.playProgress =
+              (this.audio.currentTime / this.audio.duration) * 100
+            this.audioBuffered =
+              (this.audio.buffered.end(0) / this.audio.duration) * 100
+            // this.musicReady = this.audio.readyState
+          }
+        }, 1000)
+        this.audio.onended = this.nextMusic
+      },
+      pauseMusic() {
+        this.audio.pause()
+        clearInterval(this.interval)
+        this.isPaused = this.audio.paused
+        console.dir(this.audio)
+      },
+      nextMusic() {
+        this.pauseMusic()
+        // this.musicReady = 0
+        switch (this.mode) {
+          case 'random':
+            //  如果是随机
+            this.currentIndex = Number.parseInt(
+              Math.random() * this.musicList.length
+            )
+            break
+          case 'retweet':
+            this.$store.commit('ADD_CURRENT_INDEX')
+            break
+          default:
+            break
+        }
+        this.playMusic()
+      }
+    }
   }
 </script>
 
@@ -81,7 +208,7 @@
       transition: height 0.5s 1s;
 
       &:hover {
-        height: 24px;
+        height: 10px;
         transition: height 0.5s;
       }
     }
