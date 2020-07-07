@@ -7,10 +7,10 @@
         <ol>
             <li v-for="(item, index) in unfinishedList" :key="index">
                 <input type="text" v-model="unfinishedList[index].value" 
-                :disabled="!unfinishedList[index].disabled" @keyup.enter="disabledItem(index)" @blur="disabledItem(index)">
-                <button @click="completeItem(index)">完成</button>
-                <button @click="removeItem(index)">丢弃</button>
-                <button @click="editItem(index)">修改</button>
+                :disabled="!unfinishedList[index].disabled" @keyup.enter="disabledItem(item)" @dblclick="dblclick" @blur="disabledItem(item)">
+                <button @click="completeItem(item)">完成</button>
+                <button @click="removeItem(item)">丢弃</button>
+                <button @click="editItem(item)">修改</button>
             </li>
         </ol>
         <h2>已完成
@@ -37,38 +37,41 @@ export default {
     },
     methods:{
         addItem() {
-            if(!this.inputValue)return;
+            if(!this.inputValue.trim())return;
             this.unfinishedList.push(
                 {value:this.inputValue});
             this.inputValue = '';
         },
-        completeItem(index) {
-            let item = this.unfinishedList[index];
+        completeItem(item) {
+            let index = this.unfinishedList.indexOf(item)
             if(item.disabled){
                 item.disabled = false;
             }
             this.unfinishedList.splice(index, 1);
             this.finishedList.push(item);
         },
-        removeItem(index) {
-            let item = this.unfinishedList[index];
+        removeItem(item) {
+            let index = this.finishedList.indexOf(item)
             this.unfinishedList.splice(index, 1);
         },
-        deleteItem(index) {
-            let item = this.finishedList[index];
+        deleteItem(item) {
+            let index = this.finishedList.indexOf(item)
             this.finishedList.splice(index, 1);
         },
-        editItem(index){
-            if(!this.unfinishedList[index].disabled){
-                Vue.set(this.unfinishedList[index],'disabled',true)
+        editItem(item){
+            if(item.disabled === undefined){
+                Vue.set(item,'disabled',true)
             }else{
-                this.unfinishedList[index].disabled = true;
+                item.disabled = !item.disabled;
             }
         },
-        disabledItem(index) {
-            if(this.unfinishedList[index].disabled){
-                this.unfinishedList[index].disabled = false;
+        disabledItem(item) {
+            if(item.disabled){
+                item.disabled = false;
             }
+        },
+        dblclick(){
+            console.log('dblclick')
         }
     }
 }
