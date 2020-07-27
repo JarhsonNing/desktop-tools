@@ -144,5 +144,8 @@ $themeColor:#b17;
   .md-field.md-focused::before{
     background-color: $themeColor;
   }
+  .md-field::before{
+    background-color: $themeColor;
+  }
 }
 </style>
