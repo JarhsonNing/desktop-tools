@@ -84,14 +84,14 @@ $themeColor :#b17;
     @include test2
 }
 //if 语句
-// .test3 {
-//     @if 1+3=4 {
-//       border: 1px solid;  
-//     }
-//     @if 5 < 3 {
-//         border: 2px #000 red;
-//     }
-// }
+.test3 {
+    @if 1+3==4 {
+      border: 1px solid;  
+    }
+    @if 5<3 {
+        border: 2px #000 red;
+    }
+}
 .test33 {
     @if lightness($themeColor)> 30% {
         background-color: #fff;
@@ -99,20 +99,50 @@ $themeColor :#b17;
         background: #0ff;
     }
 }
-// 这里的lightness是一个scss颜色函数，$color指向之前定义的值。
+// 这里的lightness是一个scss颜色函数
 
 //循环语法 for
-@for $i from 1 to 5 {
-    .item-#{$i} {
-        border:#{$i}px solid;
+@for $k from 1 to 5 {//through:条件范围包含 <start> 与 <end> 的值，而使用 to 时条件范围只包含 <start> 的值不包含 <end> 的值。
+    .item-#{$k} {
+        border:#{$k}px solid;
     }
 }
+
+//while
+$m: 8;
+@while $m > 0 {
+    .item-#{$m} {
+        width: 2em*$m;
+    }
+    $m :$m - 2;
+}
+
+//each
+@each $img in a,b {
+    .#{$img} {
+        background-image: url('./pic/#{$img}.jpg');
+    }
+}
+
+//function
+@function double ($number) {
+    @return $number*2;
+}
+.text9 {
+    font-size: double(20px);
+}
+// @import 'other.scss'
+
 </style>
 <style lang="scss" scoped>
+$themeColor:#b17;
 .todolist-wrapper{
     margin-top: 60px;
-    .md-field {
-        color: aquamarine;
-    }
+  .md-field.md-focused > label{
+      color: $themeColor;
+  }
+  .md-field.md-focused::before{
+    background-color: $themeColor;
+  }
 }
 </style>
