@@ -7,21 +7,25 @@
                     <label>接下来做什么</label>
                     <md-input v-model="inputValue" @keyup.enter="addItem"></md-input>
                 </md-field>
-                <tab :curState="filter" @toggle="toggleFilter"></tab>
-                <md-list class="md-list-con" v-if="filteList.length && filteList.length !=0">
+                <tab :curState="filter" @toggle="toggleFilter"></tab> 
+                <div class="list" v-if="filteList.length && filteList.length !== 0">
+                    <listItem v-for="(item,index) in filteList" :key="index" :item="item"></listItem>
+                </div>
+                <!-- <md-list v-if="filteList.length && filteList.length !=0">
                     <md-list-item v-for="(item, index) in filteList" :key="index">
-                        <span class="md-list-item-text">{{item.value}}</span>
-                        <md-checkbox v-model="item.completed"></md-checkbox>
+                        <md-checkbox v-model="item.completed" class="checkbox-color"></md-checkbox>
+                        <span class="md-list-item-text" @dblclick="dblclick(item)">{{item.value}}</span>
                     </md-list-item>
-                </md-list>        
+                </md-list>         -->
             </div>
-    </div>
+        </div>
     </div>
 </template>
 <script>
 import Vue from 'vue'
 import todoHeader from './components/header'
 import tab from './components/tab'
+import listItem from './components/item'
 export default {
     name: 'todolisthome',
     data() {
@@ -51,15 +55,19 @@ export default {
         addItem() {
             if(!this.inputValue.trim())return;
             this.lists.unshift({
-                value: this.inputValue,
+                title: this.inputValue,
                 completed: false
             })
             this.inputValue = '';
+        },
+        dblclick(item){
+            console.log('item',item)
         }
     },
     components:{
         todoHeader,
-        tab
+        tab,
+        listItem
     }
 }
 </script>
@@ -149,12 +157,10 @@ $m: 8;
     background-color: $themeColor;
   }
 }
-// .md-list-con {
-//     /deep/ .md-checked{
-//         .md-checkbox-container {
-//             background-color: $themeColor;
-//             border-color: $themeColor;
-//         }
-//     }
-// }
+.checkbox-color.md-checked {
+   ::v-deep .md-checkbox-container{
+        background-color: $themeColor;
+        border-color: $themeColor;
+    }
+}
 </style>
