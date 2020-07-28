@@ -8,7 +8,7 @@
                     <md-input v-model="inputValue" @keyup.enter="addItem"></md-input>
                 </md-field>
                 <tab :curState="filter" @toggle="toggleFilter"></tab>
-                <md-list v-if="filteList.length && filteList.length !=0">
+                <md-list class="md-list-con" v-if="filteList.length && filteList.length !=0">
                     <md-list-item v-for="(item, index) in filteList" :key="index">
                         <span class="md-list-item-text">{{item.value}}</span>
                         <md-checkbox v-model="item.completed"></md-checkbox>
@@ -64,6 +64,7 @@ export default {
 }
 </script>
 <style lang="scss">
+
 // 定义变量
 $themeColor :#b17;
 //样式的加减乘除
@@ -135,11 +136,11 @@ $m: 8;
 
 </style>
 <style lang="scss" scoped>
-$themeColor:#b17;
+@import '../scss/common.scss';
 .todolist-wrapper{
     margin-top: 60px;
   .md-field.md-focused > label{
-      color: $themeColor;
+    color: $themeColor;
   }
   .md-field.md-focused::before{
     background-color: $themeColor;
@@ -148,4 +149,12 @@ $themeColor:#b17;
     background-color: $themeColor;
   }
 }
+// .md-list-con {
+//     /deep/ .md-checked{
+//         .md-checkbox-container {
+//             background-color: $themeColor;
+//             border-color: $themeColor;
+//         }
+//     }
+// }
 </style>
