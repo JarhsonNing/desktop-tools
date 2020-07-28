@@ -1,3 +1,4 @@
+import * as func from './function';
 const mutations = {
     ADDEVENT(states,obj) {
         states.count++;
@@ -7,4 +8,4 @@ const mutations = {
     }
 
 }
-  export default mutations
+export default mutations
