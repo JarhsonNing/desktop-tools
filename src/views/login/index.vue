@@ -1,8 +1,10 @@
 <template>
-  <div class="login"></div>
+  <div class="login">123</div>
 </template>
 
 <script>
+  import { login } from '@/api/login'
+  import { getUserInfo } from '@/api/user'
   export default {
     name: 'login',
     data() {
@@ -13,26 +15,16 @@
         }
       }
     },
-    mounted() {
-      // console.log(login)
-      this.login().then(({ token }) => {
+    async mounted() {
+      try {
+        const { token } = await login(this.userinfo)
         localStorage.setItem('token', token)
-        this.getUserInfo()
-          .then(userinfo => {
-            console.log(userinfo)
-          })
-          .catch(e => {
-            console.log(e.message)
-          })
-      })
-    },
-    methods: {
-      login() {
-        return this.$axios.post('/login', this.userinfo)
-      },
-      getUserInfo() {
-        return this.$axios.get('user/info')
+        const userinfo = await getUserInfo()
+        this.$store.commit('SET_USER_INFO', userinfo)
+      } catch (error) {
+        console.log(error)
       }
-    }
+    },
+    methods: {}
   }
 </script>
