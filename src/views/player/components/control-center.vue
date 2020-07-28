@@ -1,16 +1,8 @@
 <template>
-  <div class="control">
-    <md-progress-bar
-      class="progress"
-      md-mode="buffer"
-      :md-buffer="audioBuffered"
-      :md-value="playProgress"
-      v-clickChangeProgress
-    ></md-progress-bar>
-    <md-toolbar
-      style="justify-content: center; min-height:56px "
-      class="md-accent"
-    >
+  <div ref="test" class="control">
+    <audio ref="audio" :src="musicList[currentIndex].src" loop></audio>
+    <md-progress-bar class="progress" md-mode="buffer" :md-buffer="audioBuffered" :md-value="playProgress" v-clickChangeProgress></md-progress-bar>
+    <md-toolbar style="justify-content: center; min-height:56px " class="md-accent">
       <div class="control-center">
         <!-- 播放模式 -->
         <md-menu md-size="medium" md-direction="top-end">
@@ -41,11 +33,7 @@
         </md-button>
         <!-- 暂停/播放 -->
         <md-button class="md-icon-button">
-          <i
-            v-if="isPaused"
-            class="fa fa-play-circle play"
-            @click="playMusic"
-          ></i>
+          <i v-if="isPaused" class="fa fa-play-circle play" @click="playMusic"></i>
           <i v-else class="fa fa-pause-circle pause" @click="pauseMusic"></i>
         </md-button>
         <!-- 下一曲 -->
@@ -64,12 +52,32 @@
       return {
         isPaused: true,
         // musicReady: 0,
-        mode: 'random',
         interval: null
       }
     },
     mounted() {
-      console.dir(this.audio)
+      this.audio.onplay = () => {
+        // 音频播放刷新进度条
+        this.interval = setInterval(() => {
+          try {
+            if (this.audio.readyState) {
+              this.playProgress = (this.audio.currentTime / this.audio.duration) * 100
+              this.audioBuffered = (this.audio.buffered.end(0) / this.audio.duration) * 100
+            }
+          } catch (error) {
+            clearInterval(this.interval)
+          }
+        }, 1000)
+      }
+      this.audio.onpause = () => {
+        // 音频暂停停止进度条刷新
+        clearInterval(this.interval)
+        this.isPaused = true
+      }
+      this.audio.onended = this.nextMusic
+      this.audio.onerror = this.nextMusic
+      this.$once('hook:beforeUpdate', this.pauseMusic)
+      this.$once('hook:beforeDestroy', this.pauseMusic)
     },
     watch: {
       mode: {
@@ -81,22 +89,12 @@
           }
         }
       },
-      currentIndex(val) {
-        console.log(val)
+      currentIndex() {
+        console.log('音乐切换')
+        this.playMusic()
       },
-      'audio.ended': {
-        handler(val) {
-          console.log(val)
-        },
-        deep: true
-      },
-      'audio.src': {
-        deep: true,
-        handler(val) {
-          console.log(val)
-        }
-      },
-      customPlayTime: {
+      '$store.state.player.customPlayTime': {
+        // 监听用户点击进度条事件
         deep: true,
         handler(val) {
           this.pauseMusic()
@@ -107,6 +105,15 @@
       }
     },
     computed: {
+      // 播放模式
+      mode: {
+        get() {
+          return this.$store.state.player.mode
+        },
+        set(val) {
+          this.$store.commit('SET_MODE', val)
+        }
+      },
       // 音乐播放进度
       playProgress: {
         get() {
@@ -137,65 +144,58 @@
       // 当前的音乐index
       currentIndex: {
         get() {
-          console.log('current')
           return this.$store.state.player.currentIndex
         },
         set(val) {
           this.$store.commit('SET_CURRENT_INDEX', val)
         }
       },
-      customPlayTime() {
-        return this.$store.state.player.customPlayTime
-      },
       // 音频dom
       audio() {
-        return new Audio(this.musicList[this.currentIndex].src)
+        return this.$refs.audio
       }
     },
     methods: {
       playMusic() {
-        if (!this.audio.paused) {
-          this.audio.src = this.musicList[this.currentIndex].src
+        try {
+          let testTime = 0
+          let testIntervial = setInterval(() => {
+            if (testTime++ === 9) {
+              clearInterval(testIntervial)
+            }
+            if (this.audio.readyState) {
+              this.audio.play()
+              this.isPaused = false
+              clearInterval(testIntervial)
+            }
+          }, 1000)
+        } catch (error) {
+          console.dir(error)
         }
-        this.audio.play()
-        this.isPaused = this.audio.paused
-        console.dir(this.audio)
-        this.interval = setInterval(() => {
-          if (this.audio.buffered.end(0) !== this.audio.duration) {
-          }
-          if (this.audio.readyState) {
-            this.playProgress =
-              (this.audio.currentTime / this.audio.duration) * 100
-            this.audioBuffered =
-              (this.audio.buffered.end(0) / this.audio.duration) * 100
-            // this.musicReady = this.audio.readyState
-          }
-        }, 1000)
-        this.audio.onended = this.nextMusic
       },
-      pauseMusic() {
-        this.audio.pause()
-        clearInterval(this.interval)
-        this.isPaused = this.audio.paused
-        console.dir(this.audio)
+      pauseMusic(stop = false) {
+        if (stop) {
+          this.audio.src = ''
+        } else {
+          this.audio.pause()
+        }
       },
       nextMusic() {
-        this.pauseMusic()
-        // this.musicReady = 0
         switch (this.mode) {
           case 'random':
             //  如果是随机
-            this.currentIndex = Number.parseInt(
-              Math.random() * this.musicList.length
-            )
+            this.currentIndex = Number.parseInt(Math.random() * this.musicList.length)
             break
           case 'retweet':
+            // 循环播放
             this.$store.commit('ADD_CURRENT_INDEX')
+            break
+          case 'circle':
+            this.audio.currentTime = 0
             break
           default:
             break
         }
-        this.playMusic()
       }
     }
   }
