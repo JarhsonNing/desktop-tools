@@ -1,5 +1,10 @@
 <template>
   <div class="user__home">
+    <div class="header">
+      <md-toolbar class="md-accent">
+        <h3 class="md-title" style="flex:1;text-align:left">用户中心</h3>
+      </md-toolbar>
+    </div>
     <md-card>
       <md-card-header>
         <md-card-header-text>
@@ -14,6 +19,23 @@
         </md-card-media>
       </md-card-header>
     </md-card>
+    <md-list class="md-double-line">
+      <md-list-item>
+        <md-icon class=""><i class="fas fa-user"></i></md-icon>
+
+        <div class="md-list-item-text">
+          <span>我的歌单</span>
+          <span>Personal</span>
+        </div>
+      </md-list-item>
+
+      <md-list-item class="md-inset">
+        <div class="md-list-item-text">
+          <span>ali_connors@example.com</span>
+          <span>Work</span>
+        </div>
+      </md-list-item>
+    </md-list>
   </div>
 </template>
 
@@ -32,10 +54,7 @@
         this.$router.push('/login')
       }
     },
-    mounted() {
-      console.log(this.$store.state.user)
-      console.log(this.userinfo)
-    }
+    mounted() {}
   }
 </script>
 

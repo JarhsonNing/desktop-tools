@@ -37,6 +37,7 @@ _axios.interceptors.response.use(
   },
   function(error) {
     if (error.response.status == 401) {
+      window.location.hash = '#/login'
     } else {
     }
     return Promise.reject(error.response.data)

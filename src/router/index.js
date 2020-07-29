@@ -48,7 +48,7 @@ router.beforeEach(async (to, from, next) => {
       } else {
         try {
           await store.dispatch('fetchUserInfo')
-          next({ path: '/' })
+          next({ path: to.query.redirect || '/' })
         } catch (error) {
           next()
         }
