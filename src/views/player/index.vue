@@ -40,7 +40,7 @@
       }
       .info {
         flex: 1;
-        border-left: 1px solid rgba($color: #000000, $alpha: 0.1);
+        border-left: 1px solid rgba(#000000, 0.1);
         box-sizing: border-box;
         display: flex;
         flex-flow: column nowrap;

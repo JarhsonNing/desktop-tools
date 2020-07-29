@@ -5,7 +5,12 @@ export default {
     Vue.directive('clickChangeProgress', {
       bind(el, binding, vnode, oldVnode) {
         el.onclick = function(e) {
-          store.commit('SET_PLAY_PROGESS', (e.offsetX / el.offsetWidth) * 100)
+          if (store.state.player.audioBuffered) {
+            let percent = (e.offsetX / el.offsetWidth) * 100
+            store.commit('SET_CUSTOM_PLAY_TIME', percent)
+          } else {
+            return
+          }
         }
       }
     })
