@@ -20,14 +20,16 @@ const routes = [
   {
     path: '/about',
     name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
+    path: '/404',
+    name: '404',
+    component: () => import(/* webpackChunkName: "404" */ '@/views/404')
+  },
+  {
     path: '*',
-    redirect: '/about'
+    redirect: '/404'
   }
 ]
 
@@ -36,20 +38,27 @@ const router = new VueRouter({
 })
 
 // 路由跳转规则
-// router.beforeEach(async (to, from, next) => {
-//   // const token = localStorage.getItem('token') || ''
-//   // if (token) {
-//   //   if(store.state.user.userinfo.id){
-//   //     next()
-//   //   }else{
-//   //     try {
-//   //       store.dispatch('getInfo')
-//   //       next()
-//   //     } catch (error) {
-//   //     }
-//   //   }
-//   // } else {
-//   // }
-// })
+router.beforeEach(async (to, from, next) => {
+  to.query.redirect = from.path
+  if (to.path === '/login') {
+    const token = localStorage.getItem('token') || ''
+    if (token) {
+      if (store.state.user.userinfo.id) {
+        next({ path: to.query.redirect || '/' })
+      } else {
+        try {
+          await store.dispatch('fetchUserInfo')
+          next({ path: '/' })
+        } catch (error) {
+          next()
+        }
+      }
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
+})
 
 export default router

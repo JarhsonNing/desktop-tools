@@ -1,9 +1,9 @@
-const playerLayout = () =>
-  import(/* webpackChunkName:'player' */ '@/views/player')
-const playerNeteasyLayout = () =>
-  import(/* webpackChunkName: "playerNeteasy" */ '@/views/player/neteasy')
-const playerNeteasyHome = () => import('@/views/player/neteasy/home')
-const playerNeteasySearch = () => import('@/views/player/neteasy/search')
+const playerLayout = () => import(/* webpackChunkName:'player' */ '@/views/player')
+const playerNeteasyLayout = () => import(/* webpackChunkName: "playerNeteasy" */ '@/views/player/neteasy')
+const playerNeteasyHome = () => import(/* webpackChunkName: "playerNeteasy" */ '@/views/player/neteasy/home')
+const playerNeteasySearch = () => import(/* webpackChunkName: "playerNeteasy" */ '@/views/player/neteasy/search')
+const playerUserLayout = () => import(/* webpackChunkName: "user" */ '@/views/player/user')
+const playerUserHome = () => import(/* webpackChunkName: "playerUser" */ '@/views/player/user/home')
 
 export default [
   {
@@ -32,14 +32,20 @@ export default [
       {
         path: 'kugou',
         name: 'playerKugou',
-        component: () =>
-          import(/* webpackChunkName: "playerKugou" */ '@/views/Home.vue')
+        component: () => import(/* webpackChunkName: "playerKugou" */ '@/views/Home.vue')
       },
       {
         path: 'user',
         name: 'playerUser',
-        component: () =>
-          import(/* webpackChunkName: "about" */ '@/views/Home.vue')
+        component: playerUserLayout,
+        redirect: '/player/user/home',
+        children: [
+          {
+            path: 'home',
+            name: 'playerUserHome',
+            component: playerUserHome
+          }
+        ]
       }
     ]
   }
