@@ -28,19 +28,30 @@
         <md-input v-model="userinfo.username" readonly></md-input>
       </md-field>
 
-      <md-field v-if="canChangePassword">
-        <label>密码</label>
-        <md-input v-model="password.password" type="password" required></md-input>
-      </md-field>
-      <md-field v-if="canChangePassword">
-        <label>确认密码</label>
-        <md-input v-model="password.repassword" type="password" required></md-input>
-      </md-field>
-
       <div class="md-inset">
         <md-button class="md-accent" @click="canChangePassword = !canChangePassword">修改密码</md-button>
       </div>
     </div>
+
+    <md-dialog :md-active.sync="canChangePassword">
+      <md-dialog-title>修改密码</md-dialog-title>
+
+      <div style="padding:0 20px">
+        <md-field>
+          <label>密码</label>
+          <md-input v-model="password.password" type="password" required></md-input>
+        </md-field>
+        <md-field>
+          <label>确认密码</label>
+          <md-input v-model="password.repassword" type="password" required></md-input>
+        </md-field>
+      </div>
+
+      <md-dialog-actions>
+        <md-button class="md-primary" @click="canChangePassword = false">Close</md-button>
+        <md-button class="md-primary" @click="changePassword">Save</md-button>
+      </md-dialog-actions>
+    </md-dialog>
   </div>
 </template>
 
@@ -81,8 +92,11 @@
     },
     methods: {
       avatarChange() {
-        console.dir(this.avatar_uploader.files[0])
         this.filereader.readAsDataURL(this.avatar_uploader.files[0])
+      },
+      changePassword() {
+        //todo 修改密码
+        this.canChangePassword = false
       }
     }
   }
@@ -109,7 +123,7 @@
           overflow: hidden;
           cursor: pointer;
           opacity: 0;
-          z-index: 10;
+          z-index: 0;
         }
         &__preview {
           top: 0;
@@ -117,7 +131,7 @@
           width: 100%;
           height: 100%;
           position: absolute;
-          z-index: 9;
+          z-index: -1;
           cursor: pointer;
         }
       }
@@ -125,5 +139,8 @@
     .form {
       margin: 0 20px;
     }
+  }
+  .md-dialog ::v-deep.md-dialog-container {
+    min-width: 500px;
   }
 </style>
