@@ -4,6 +4,7 @@ const playerNeteasyHome = () => import(/* webpackChunkName: "playerNeteasy" */ '
 const playerNeteasySearch = () => import(/* webpackChunkName: "playerNeteasy" */ '@/views/player/neteasy/search')
 const playerUserLayout = () => import(/* webpackChunkName: "user" */ '@/views/player/user')
 const playerUserHome = () => import(/* webpackChunkName: "playerUser" */ '@/views/player/user/home')
+const playerUserUserinfo = () => import(/* webpackChunkName: "playerUser" */ '@/views/player/user/userinfo')
 
 export default [
   {
@@ -44,6 +45,11 @@ export default [
             path: 'home',
             name: 'playerUserHome',
             component: playerUserHome
+          },
+          {
+            path: 'userinfo',
+            name: 'playerUserUserinfo',
+            component: playerUserUserinfo
           }
         ]
       }
