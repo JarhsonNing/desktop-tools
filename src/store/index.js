@@ -12,7 +12,7 @@ export default new Vuex.Store({
   actions: {},
   modules: {
     player,
-    todolist
+    todolist,
     user
   }
 })

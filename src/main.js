@@ -8,6 +8,7 @@ import '@/assets/css/font-awesome.min.css'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css'
+import '@/assets/css/style.css'
 Vue.use(VueMaterial)
 Vue.use(myDirective)
 

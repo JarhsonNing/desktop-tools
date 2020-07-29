@@ -1,0 +1,60 @@
+html, body, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, th, td, img, area, param {
+  margin: 0;
+  padding: 0;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+i, em, b {
+  font-style: normal
+}
+
+img {
+  border: none;
+}
+
+input, button, select, option, textarea {
+  border: none;
+  outline: none;
+}
+
+a{
+  text-decoration:none;
+  color: #757575;
+}
+
+html {
+  min-height: 100%;
+}
+
+body {
+  font-family: "Tahoma", arial, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #757575;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.flex {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+}
+.flex-n {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 auto;
+  flex: 0 0 auto;
+}
+.flex-1-1 {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+}
+.flex-align-center {
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
