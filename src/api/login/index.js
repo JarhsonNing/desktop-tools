@@ -1,4 +1,5 @@
 import axios from '@/plugins/axios'
 
 const login = userinfo => axios.post('login', userinfo)
-export { login }
+const signup = userinfo => axios.post('user/register',userinfo)
+export { login,signup }
