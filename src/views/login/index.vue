@@ -86,7 +86,6 @@
         try {
           const { userid } = await signup(this.userinfo);
           if(userid){
-            console.log('注册成功');
             this.isloginPage = true;
           }
         }catch (err) {
