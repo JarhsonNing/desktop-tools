@@ -22,6 +22,11 @@
         <md-button class="md-raised md-primary" @click="login" :class="['login-btn',{'active':isloginPage}]">登陆</md-button>
         <md-button class="md-raised" @click="signup" :class="['signup-btn',{'active':!isloginPage}]">注册</md-button>        
     </div>
+    <md-dialog-alert
+      :md-active.sync="showDialog"
+      :md-content="dialogTxt"
+      @md-confirm ="closeDialog"
+      md-confirm-text="COOL!"  />
   </div>
 </template>
 
@@ -43,6 +48,9 @@
         pwdCInvalid:false,
         pwdtxt:'请输入密码',
         pwdCtxt:'请再次确认密码',
+        showDialog:false,
+        dialogTxt:'',
+        dialogTimer:''
       }
     },
     computed:{
@@ -79,7 +87,9 @@
             this.isloginPage = true;
           }
         }catch (err) {
-          console.log(err)
+          console.log(err);
+          this.showDialog = true;
+          this.dialogTxt = err.message;
         }
       },
       async login(){
@@ -95,8 +105,16 @@
           localStorage.setItem('token', token)
           const userinfo = await getUserInfo()
           this.$store.commit('SET_USER_INFO', userinfo);
+          this.showDialog = true;
+          this.dialogTxt ='登陆成功';
+          this.dialogTimer = setTimeout(()=>{
+            this.showDialog = false;
+            this.$router.push('/')      
+          },1000)
         } catch (error) {
           console.log(error)
+          this.showDialog = true;
+          this.dialogTxt = error.message;
         }
       },
       resetFormValidate(){
@@ -133,6 +151,13 @@
           if(isValid)return true;
           return false;
         }
+      },
+      closeDialog(){
+        if(this.dialogTimer){
+          clearTimeout(this.dialogTimer);
+        }
+        this.showDialog = false;
+        this.$router.push('/')      
       }
   },
 
