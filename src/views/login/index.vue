@@ -41,6 +41,25 @@
     methods: {
       async login() {
         try {
+          const { userid } = await signup(this.userinfo);
+          if(userid){
+            this.isloginPage = true;
+          }
+        }catch (err) {
+          console.log(err);
+          this.showDialog = true;
+          this.dialogTxt = err.message;
+        }
+      },
+      async login(){
+        this.resetFormValidate();
+        if(!this.isloginPage){
+          this.isloginPage = true;
+          return;
+        }
+        let isValid = this.formValidate();
+        if(!isValid)return;
+        try {
           const { token } = await login(this.userinfo)
           localStorage.setItem('token', token)
           const userinfo = await getUserInfo()
