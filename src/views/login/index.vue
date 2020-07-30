@@ -69,6 +69,9 @@
           'md-invalid': this.pwdCInvalid
         }
       },
+      redirect() {
+        return this.$route.query.redirect || '/'
+      }
     },
     methods: {
       async signup(){
@@ -154,7 +157,7 @@
           clearTimeout(this.dialogTimer);
         }
         this.showDialog = false;
-        this.$router.push('/')      
+        this.redirect();
       }
   },
 
