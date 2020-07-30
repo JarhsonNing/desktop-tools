@@ -53,7 +53,7 @@
         dialogTimer:''
       }
     },
-    computed:{
+    computed: {
       usernameMsg(){
         return {
           'md-invalid': this.usernameInvalid
@@ -107,10 +107,7 @@
           this.$store.commit('SET_USER_INFO', userinfo);
           this.showDialog = true;
           this.dialogTxt ='登陆成功';
-          this.dialogTimer = setTimeout(()=>{
-            this.showDialog = false;
-            this.$router.push('/')      
-          },1000)
+          this.dialogTimer = setTimeout(this.closeDialog,1000)
         } catch (error) {
           console.log(error)
           this.showDialog = true;
