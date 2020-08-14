@@ -1,8 +1,17 @@
 <template>
   <div ref="test" class="control">
     <audio ref="audio" :src="musicList[currentIndex].src" loop></audio>
-    <md-progress-bar class="progress" md-mode="buffer" :md-buffer="audioBuffered" :md-value="playProgress" v-clickChangeProgress></md-progress-bar>
-    <md-toolbar style="justify-content: center; min-height:56px " class="md-accent">
+    <md-progress-bar
+      class="progress"
+      md-mode="buffer"
+      :md-buffer="audioBuffered"
+      :md-value="playProgress"
+      v-clickChangeProgress
+    ></md-progress-bar>
+    <md-toolbar
+      style="justify-content: center; min-height:56px "
+      class="md-accent"
+    >
       <div class="control-center">
         <!-- 播放模式 -->
         <md-menu md-size="medium" md-direction="top-end">
@@ -33,7 +42,11 @@
         </md-button>
         <!-- 暂停/播放 -->
         <md-button class="md-icon-button">
-          <i v-if="isPaused" class="fa fa-play-circle play" @click="playMusic"></i>
+          <i
+            v-if="isPaused"
+            class="fa fa-play-circle play"
+            @click="playMusic"
+          ></i>
           <i v-else class="fa fa-pause-circle pause" @click="pauseMusic"></i>
         </md-button>
         <!-- 下一曲 -->
@@ -61,8 +74,10 @@
         this.interval = setInterval(() => {
           try {
             if (this.audio.readyState) {
-              this.playProgress = (this.audio.currentTime / this.audio.duration) * 100
-              this.audioBuffered = (this.audio.buffered.end(0) / this.audio.duration) * 100
+              this.playProgress =
+                (this.audio.currentTime / this.audio.duration) * 100
+              this.audioBuffered =
+                (this.audio.buffered.end(0) / this.audio.duration) * 100
             }
           } catch (error) {
             clearInterval(this.interval)
@@ -184,7 +199,9 @@
         switch (this.mode) {
           case 'random':
             //  如果是随机
-            this.currentIndex = Number.parseInt(Math.random() * this.musicList.length)
+            this.currentIndex = Number.parseInt(
+              Math.random() * this.musicList.length
+            )
             break
           case 'retweet':
             // 循环播放
