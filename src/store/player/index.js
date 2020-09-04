@@ -4,11 +4,7 @@ const MODE = {
   '3': 'retweet'
 }
 const state = {
-  playList: [
-    {
-      src: 'https://rl01-sycdn.kuwo.cn/cbb7db6086ae6461272b3c6e4245981d/5f02f4ef/resource/n1/89/4/4251029656.mp3'
-    }
-  ],
+  playList: JSON.parse(localStorage.getItem('currentMusicList')) || [],
   currentIndex: 0,
   audioBuffered: 0,
   mode: localStorage.getItem('playmode') || 'retweet',
@@ -23,6 +19,7 @@ const mutations = {
   },
   SET_PLAY_LIAT(state, list) {
     state.playList = list
+    localStorage.setItem('currentMusicList', JSON.stringify(list))
   },
   SET_CUSTOM_PLAY_TIME(state, percent) {
     state.customPlayTime = percent

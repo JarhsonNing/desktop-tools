@@ -1,6 +1,6 @@
 <template>
   <div ref="test" class="control">
-    <audio ref="audio" :src="musicList[currentIndex].src" loop></audio>
+    <audio ref="audio" :src="musicUrl" loop></audio>
     <md-progress-bar
       class="progress"
       md-mode="buffer"
@@ -37,7 +37,7 @@
           </md-menu-content>
         </md-menu>
         <!-- 上一曲 -->
-        <md-button class="md-icon-button prev">
+        <md-button class="md-icon-button prev" @click="nextMusic">
           <i class="fa fa-step-backward"></i>
         </md-button>
         <!-- 暂停/播放 -->
@@ -63,31 +63,30 @@
     name: 'controlCenter',
     data() {
       return {
+        canPlay: false,
         isPaused: true,
         // musicReady: 0,
         interval: null
       }
     },
     mounted() {
+      console.dir(this.audio)
+
+      if (!this.musicList.length) {
+        this.audio.oncanplaythrough = () => {
+          this.audio.play()
+        }
+      }
       this.audio.onplay = () => {
-        // 音频播放刷新进度条
-        this.interval = setInterval(() => {
-          try {
-            if (this.audio.readyState) {
-              this.playProgress =
-                (this.audio.currentTime / this.audio.duration) * 100
-              this.audioBuffered =
-                (this.audio.buffered.end(0) / this.audio.duration) * 100
-            }
-          } catch (error) {
-            clearInterval(this.interval)
-          }
-        }, 1000)
+        this.isPaused = false
       }
       this.audio.onpause = () => {
-        // 音频暂停停止进度条刷新
-        clearInterval(this.interval)
         this.isPaused = true
+      }
+      this.audio.ontimeupdate = () => {
+        this.playProgress = (this.audio.currentTime / this.audio.duration) * 100
+        this.audioBuffered =
+          (this.audio.buffered.end(0) / this.audio.duration) * 100
       }
       this.audio.onended = this.nextMusic
       this.audio.onerror = this.nextMusic
@@ -168,32 +167,28 @@
       // 音频dom
       audio() {
         return this.$refs.audio
+      },
+      musicUrl() {
+        if (this.musicList.length) {
+          return this.musicList[this.currentIndex].url
+        } else {
+          return ''
+        }
       }
     },
     methods: {
       playMusic() {
         try {
-          let testTime = 0
-          let testIntervial = setInterval(() => {
-            if (testTime++ === 9) {
-              clearInterval(testIntervial)
-            }
-            if (this.audio.readyState) {
-              this.audio.play()
-              this.isPaused = false
-              clearInterval(testIntervial)
-            }
-          }, 1000)
+          this.audio.oncanplaythrough = () => {
+            this.audio.play()
+          }
+          this.audio.play()
         } catch (error) {
           console.dir(error)
         }
       },
-      pauseMusic(stop = false) {
-        if (stop) {
-          this.audio.src = ''
-        } else {
-          this.audio.pause()
-        }
+      pauseMusic() {
+        this.audio.pause()
       },
       nextMusic() {
         switch (this.mode) {

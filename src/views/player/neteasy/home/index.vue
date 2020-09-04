@@ -3,10 +3,7 @@
     <div class="header">
       <md-toolbar class="md-accent">
         <h3 class="md-title" style="flex:1;text-align:left">网易云音乐</h3>
-        <md-button
-          class="md-icon-button"
-          @click="$router.push({ name: 'playerNeteasySearch' })"
-        >
+        <md-button class="md-icon-button" @click="goSearch">
           <i class="fa fa-search"></i>
         </md-button>
       </md-toolbar>
@@ -22,7 +19,12 @@
 
 <script>
   export default {
-    name: 'playerNeteasyHome'
+    name: 'playerNeteasyHome',
+    methods: {
+      goSearch() {
+        this.$router.push({ name: 'playerNeteasySearch' })
+      }
+    }
   }
 </script>
 

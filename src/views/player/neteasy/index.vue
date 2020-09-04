@@ -15,5 +15,6 @@
 
 <style lang="scss" scoped>
   .neteasy {
+    height: 100%;
   }
 </style>
