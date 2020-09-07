@@ -87,6 +87,11 @@
             0,
             ...musicList
           )
+          this.$router.replace({
+            query: {
+              autoPlay: 1
+            }
+          })
           this.$store.commit('SET_PLAY_LIAT', playList)
           this.$store.commit('ADD_CURRENT_INDEX')
         }

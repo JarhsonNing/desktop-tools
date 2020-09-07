@@ -1,6 +1,17 @@
 <template>
   <div ref="test" class="control">
-    <audio ref="audio" :src="musicUrl" loop></audio>
+    <audio
+      ref="audio"
+      :src="musicUrl"
+      preload="auto"
+      @canplaythrough="audioCanPlayThrough"
+      @ended="audioEnded"
+      @error="audioError"
+      @play="isPaused = false"
+      @pause="isPaused = true"
+      @seeking="audioSeeking"
+      @timeupdate="audioTimeUpdate"
+    ></audio>
     <md-progress-bar
       class="progress"
       md-mode="buffer"
@@ -53,6 +64,7 @@
         <md-button class="md-icon-button next" @click="nextMusic">
           <i class="fa fa-step-forward"></i>
         </md-button>
+        <span>{{ currentTimeString }}/{{ time }}</span>
       </div>
     </md-toolbar>
   </div>
@@ -65,33 +77,13 @@
       return {
         canPlay: false,
         isPaused: true,
-        // musicReady: 0,
+        time: '0:00',
+        currentTime: 0,
         interval: null
       }
     },
     mounted() {
       console.dir(this.audio)
-
-      if (!this.musicList.length) {
-        this.audio.oncanplaythrough = () => {
-          this.audio.play()
-        }
-      }
-      this.audio.onplay = () => {
-        this.isPaused = false
-      }
-      this.audio.onpause = () => {
-        this.isPaused = true
-      }
-      this.audio.ontimeupdate = () => {
-        this.playProgress = (this.audio.currentTime / this.audio.duration) * 100
-        this.audioBuffered =
-          (this.audio.buffered.end(0) / this.audio.duration) * 100
-      }
-      this.audio.onended = this.nextMusic
-      this.audio.onerror = this.nextMusic
-      this.$once('hook:beforeUpdate', this.pauseMusic)
-      this.$once('hook:beforeDestroy', this.pauseMusic)
     },
     watch: {
       mode: {
@@ -102,10 +94,6 @@
             this.audio.loop = false
           }
         }
-      },
-      currentIndex() {
-        console.log('音乐切换')
-        this.playMusic()
       },
       '$store.state.player.customPlayTime': {
         // 监听用户点击进度条事件
@@ -119,6 +107,29 @@
       }
     },
     computed: {
+      currentTimeString() {
+        // 当前时间的时间格式
+        let m = Math.floor(this.currentTime / 60)
+        let s =
+          Math.floor(this.currentTime % 60) < 10
+            ? `0${Math.floor(this.currentTime % 60)}`
+            : Math.floor(this.currentTime % 60)
+        return m + ':' + s
+      },
+      autoPlay: {
+        // 是否自动播放
+        get() {
+          return Number(this.$route.query.autoPlay) || 0
+        },
+        set(v) {
+          this.$router.replace({
+            query: {
+              autoPlay: v ? 1 : 0
+            }
+          })
+        }
+      },
+
       // 播放模式
       mode: {
         get() {
@@ -162,6 +173,8 @@
         },
         set(val) {
           this.$store.commit('SET_CURRENT_INDEX', val)
+          console.log('音乐切换')
+          this.playMusic()
         }
       },
       // 音频dom
@@ -169,7 +182,7 @@
         return this.$refs.audio
       },
       musicUrl() {
-        if (this.musicList.length) {
+        if (this.musicList && this.musicList[this.currentIndex]) {
           return this.musicList[this.currentIndex].url
         } else {
           return ''
@@ -177,14 +190,45 @@
       }
     },
     methods: {
-      playMusic() {
-        try {
-          this.audio.oncanplaythrough = () => {
-            this.audio.play()
-          }
+      test(name) {
+        console.log(name)
+      },
+      audioTimeUpdate(e) {
+        this.currentTime = this.audio.currentTime || this.currentTime
+        if (this.audio.duration > 0) {
+          this.playProgress =
+            (this.audio.currentTime / this.audio.duration) * 100
+        }
+        if (this.audio.buffered.length > 0) {
+          this.audioBuffered =
+            (this.audio.buffered.end(0) / this.audio.duration) * 100
+        }
+      },
+      audioSeeking(e) {
+        console.log(event)
+      },
+      audioError() {
+        this.canPlay = false
+        // this.nextMusic()
+      },
+      audioEnded() {
+        this.canPlay = false
+        this.nextMusic()
+      },
+      audioCanPlayThrough() {
+        this.canPlay = true
+        this.time =
+          Math.floor(this.audio.duration / 60) +
+          ':' +
+          Math.floor(this.audio.duration % 60)
+        if (this.autoPlay) {
           this.audio.play()
-        } catch (error) {
-          console.dir(error)
+        }
+      },
+      playMusic() {
+        this.autoPlay = true
+        if (this.canPlay) {
+          this.audio.play()
         }
       },
       pauseMusic() {
